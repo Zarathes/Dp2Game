@@ -11,6 +11,8 @@ import model.entity.Astroid;
 
 public class ObjectManager {
 	private static ObjectManager instance = null;
+
+	private float timer = 1000f;		
 	
 	private MoveBehaviour moveContainer;
 	private UpdateBehaviour updateContainer;
@@ -46,8 +48,11 @@ public class ObjectManager {
     }
 
 	public void update(float delta) {
-		if(Astroid.needsSpawn()){
+		if(Astroid.needsSpawn() && timer < 0){
 			createEntity(EntityID.Astroid);
+			timer = 1000f;
+		} else {
+			timer = timer - delta;
 		}
 		
 		moveContainer.execute(delta);

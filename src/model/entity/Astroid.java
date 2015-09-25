@@ -1,17 +1,16 @@
 package model.entity;
 
+import static model.GameGlobals.GHEIGHT;
 import static model.GameGlobals.GWIDTH;
 
 import java.awt.Dimension;
-
-import static model.GameGlobals.GHEIGHT;
 
 import controller.behaviour.AnimateBehaviour;
 import controller.behaviour.MoveBehaviour;
 import controller.behaviour.RenderBehaviour;
 import controller.behaviour.UpdateBehaviour;
 import library.Point;
-import library.RandInt;
+import library.Rand;
 import library.Vector;
 import model.EntityID;
 import model.ResourceManager;
@@ -45,33 +44,58 @@ public class Astroid extends GameObject {
 	}
 	
 	private void init(){
-		switch(RandInt.randInt(0,3)){
+		Vector min;
+		Vector max;
+		
+		switch(Rand.randInt(0,3)){
 			case 0:
 				// North
-				setPosition(new Point(RandInt.randInt(0,GWIDTH), -50));
-				setDirection(new Vector(0, 5));
+				// Start position
+				setPosition(new Point(Rand.randInt(50, GWIDTH - 50), -50));
+				
+				// Direction
+				min = new Vector((0 - getPosition().getX()) / (GHEIGHT - getPosition().getY()), 1f);
+				max = new Vector((GWIDTH - getPosition().getX()) / (GHEIGHT - getPosition().getY()) , 1f);				
+				
+				setDirection(new Vector(Rand.randFloat(min.getX(), max.getX()), 1));
 				break;
 			case 1:
 				// East
-				setPosition(new Point(GWIDTH + 50, RandInt.randInt(0,GHEIGHT)));
-				setDirection(new Vector(-5, 0));
+				setPosition(new Point(GWIDTH, Rand.randInt(50,GHEIGHT -50)));
+				
+				// Direction
+				min = new Vector(1f, (0 - getPosition().getY()) / (GWIDTH - getPosition().getX()));
+				max = new Vector(1f, (GHEIGHT - getPosition().getY()) / (GHEIGHT - getPosition().getX()));				
+				
+				setDirection(new Vector(1, Rand.randFloat(min.getY(), max.getY())));
 				break;
 			case 2:
 				// South
-				setPosition(new Point(RandInt.randInt(0,GWIDTH), GHEIGHT + 50));
-				setDirection(new Vector(0, -5));
+				setPosition(new Point(Rand.randInt(50, GWIDTH - 50), GHEIGHT + 50));
+				
+				// Direction
+				min = new Vector((0 - getPosition().getX()) / (getPosition().getY()), -1f);
+				max = new Vector((GWIDTH - getPosition().getX()) / (getPosition().getY()) , -1f);				
+				
+				setDirection(new Vector(Rand.randFloat(min.getX(), max.getX()), -1));
 				break;
 			default:
 				//West
-				setPosition(new Point( -50, RandInt.randInt(0,GHEIGHT)));
-				setDirection(new Vector(5, 0));
+				setPosition(new Point( -50, Rand.randInt(0,GHEIGHT)));
+				// Direction
+				min = new Vector(1f, (0 - getPosition().getY()) / (getPosition().getX()));
+				max = new Vector(1f, (GHEIGHT - getPosition().getY()) / (getPosition().getX()));				
+				
+				setDirection(new Vector(-1, Rand.randFloat(min.getY(), max.getY())));
 				break;
 		
 		}
 		setSprite(ResourceManager.getInstance().getSprite("astroid"));
 		setAlive(true);
-		int size = RandInt.randInt((GWIDTH/ 100) * 5, (GWIDTH / 100) * 15);
+		int size = Rand.randInt((GWIDTH/ 100) * 5, (GWIDTH / 100) * 15);
 		setSize(new Dimension(size, size));
+		
+		System.out.println("Spawn Astroid");
 	}
 	
 	public static boolean needsSpawn(){
