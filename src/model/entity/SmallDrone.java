@@ -2,7 +2,7 @@ package model.entity;
 
 import static model.GameGlobals.GHEIGHT;
 import static model.GameGlobals.GWIDTH;
-import static model.GameGlobals.MAX_ASTROID;
+import static model.GameGlobals.MAX_DRONE;
 
 import java.awt.Dimension;
 
@@ -17,7 +17,7 @@ import library.Vector;
 import model.EntityID;
 import model.ResourceManager;
 
-public class Astroid extends GameObject {
+public class SmallDrone extends GameObject {
 	private MoveBehaviour moveContainer;
 	private UpdateBehaviour updateContainer;
 	private CollisionBehaviour collisionContainer;
@@ -26,8 +26,8 @@ public class Astroid extends GameObject {
 	
 	private static int spawnCount = 0;
 	
-	public Astroid(MoveBehaviour mb, UpdateBehaviour ub, CollisionBehaviour cb, AnimateBehaviour ab, RenderBehaviour rb) {
-		super(EntityID.Astroid);
+	public SmallDrone(MoveBehaviour mb, UpdateBehaviour ub, CollisionBehaviour cb, AnimateBehaviour ab, RenderBehaviour rb) {
+		super(EntityID.SmallDrone);
 		
 		init();
 		
@@ -49,8 +49,9 @@ public class Astroid extends GameObject {
 		spawnCount++;
 	}
 	
+	
 	private void init(){
-		int size = Rand.randInt((GWIDTH/ 100) * 5, (GWIDTH / 100) * 10);
+		int size = Rand.randInt((GWIDTH/ 100) * 2, (GWIDTH / 100) * 6);
 		setSize(new Dimension(size, size));
 		
 		Vector min;
@@ -59,7 +60,7 @@ public class Astroid extends GameObject {
 		switch(Rand.randInt(0,3)){
 			case 0:
 				
-				System.out.println("Spawn Astroid: North");
+				System.out.println("Spawn Small Drone");
 				// North
 				// Start position
 				setPosition(new Point(Rand.randInt(size, GWIDTH - size), -size));
@@ -71,7 +72,7 @@ public class Astroid extends GameObject {
 				setDirection(new Vector(Rand.randFloat(min.getX(), max.getX()), 1f));
 				break;
 			case 1:
-				System.out.println("Spawn Astroid: East");
+				System.out.println("Spawn Small Drone: East");
 				// East
 				setPosition(new Point(GWIDTH + size, Rand.randInt(size, GHEIGHT -size)));
 				
@@ -93,7 +94,7 @@ public class Astroid extends GameObject {
 				setDirection(new Vector(Rand.randFloat(min.getX(), max.getX()), -1));
 				break;
 			case 3:
-				System.out.println("Spawn Astroid: West");
+				System.out.println("Spawn Small Drone");
 				//West
 				setPosition(new Point(-size, Rand.randInt(size, GHEIGHT - size)));
 				// Direction
@@ -102,26 +103,27 @@ public class Astroid extends GameObject {
 				
 				setDirection(new Vector(1f, Rand.randFloat(min.getY(), max.getY())));
 				break;
-				default:
-					break;
+			default:
+				break;
 		
 		}
 		
-		setDirection(Vector.multiplyVector(getDirection(), Rand.randFloat(2, 10)));
+		setDirection(Vector.multiplyVector(getDirection(), Rand.randFloat(2, 5)));
 		
-		setSprite(ResourceManager.getInstance().getSprite("astroid"));
+		setSprite(ResourceManager.getInstance().getSprite("small-ship"));
 		setAlive(true);
 	}
 	
 	public static boolean needsSpawn(){
-		if(spawnCount < MAX_ASTROID){
+		if(spawnCount < MAX_DRONE){
 			return true;
 		}
 		
 		return false;
 	}
-	
-	public void die(){		
+
+	@Override
+	public void die() {
 		moveContainer.remove(this);
 		updateContainer.remove(this);
 		collisionContainer.remove(this);

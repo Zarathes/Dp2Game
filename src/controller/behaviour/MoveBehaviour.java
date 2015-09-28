@@ -2,7 +2,7 @@ package controller.behaviour;
 
 import java.util.ArrayList;
 
-import library.Point;
+import library.Vector;
 import model.entity.GameObject;
 
 public class MoveBehaviour {
@@ -25,9 +25,7 @@ public class MoveBehaviour {
 		for (int i = 0; i < entities.size(); i++) {
 			GameObject entity = entities.get(i);	
 			
-			Point pos = entity.getPosition();
-			pos.setX(pos.getX() + (entity.getDirection().getX() / delta));	
-			pos.setY(pos.getY() + (entity.getDirection().getY() / delta));			
+			entity.setPosition(entity.getPosition().addVector(Vector.divideVector(entity.getDirection(), delta)));		
 		}		
 	}
 }

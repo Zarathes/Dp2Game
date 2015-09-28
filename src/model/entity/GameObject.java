@@ -10,7 +10,7 @@ import model.EntityID;
 public abstract class GameObject {
 	protected EntityID id;
 	
-	protected Point position;
+	protected Point position, origin;
 	protected Vector direction;
 	protected Dimension size;
 	
@@ -42,8 +42,15 @@ public abstract class GameObject {
 	public Point getPosition() {
 		return position;
 	}
+	
+	public Point getOrigin() {
+		return origin;
+	}
 
 	public void setPosition(Point position) {
+		if(this.position == null){
+			origin = position;
+		}
 		this.position = position;
 	}
 
@@ -65,6 +72,14 @@ public abstract class GameObject {
 
 	public boolean isAlive() {
 		return alive;
+	}
+	
+	public int getRadius(){
+		return (int) size.getWidth() / 2;
+	}
+	
+	public int getMass(){
+		return (int) (size.getWidth() * size.getHeight());
 	}
 
 	public void setAlive(boolean alive) {

@@ -26,8 +26,8 @@ public class UpdateBehaviour {
 		for (int i = 0; i < entities.size(); i++) {
 			GameObject entity = entities.get(i);	
 			
-			if(-50 > entity.getPosition().getX() || entity.getPosition().getX() > GWIDTH + 50 || 
-			   -50 > entity.getPosition().getY() || entity.getPosition().getY() > GHEIGHT + 50 ){
+			if(-entity.getSize().getWidth() > entity.getPosition().getX() || entity.getPosition().getX() > GWIDTH + entity.getSize().getWidth() || 
+			   -entity.getSize().getHeight() > entity.getPosition().getY() || entity.getPosition().getY() > GHEIGHT + entity.getSize().getWidth()){
 				entity.setAlive(false);
 			}
 			
