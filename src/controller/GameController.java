@@ -9,8 +9,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Toolkit;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferStrategy;
 
+import model.GameGlobals.States;
 import model.ResourceManager;
 import view.GameWindow;
 
@@ -20,6 +25,8 @@ public class GameController extends Canvas implements Runnable {
 	
 	private Thread gameLoop;
 	private boolean running = false;
+	private States gameState = null;
+	private InputManager im = null;
 	
 	public static void main(String args[]){
 		new GameController();
@@ -32,7 +39,23 @@ public class GameController extends Canvas implements Runnable {
 			GHEIGHT = (int) screenSize.getHeight();
 		}
 		
-		new GameWindow("Space Shooter", this);
+		GameWindow gw = new GameWindow("Space Shooter", this);
+		
+        gw.addMouseListener(new MouseAdapter() {
+        	@Override
+        	public void mouseClicked(MouseEvent me){
+                im.processMouseClick(me);
+                me.consume();
+            }
+		});
+        
+        gw.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                im.processKeyInput(e);
+                e.consume();
+            }
+        });
 	}
 	
 	public synchronized void start(){
@@ -59,15 +82,20 @@ public class GameController extends Canvas implements Runnable {
 		long timer = System.currentTimeMillis();
 		int frames = 0;
 		
+		im =  new InputManager(this);
+		
 		while(running){
 			long now = System.nanoTime();
 			delta += (now - lastTime) / ns;
 			lastTime = now;
 			
-			while(delta >= 1){
-				gameUpdate(delta);
-				delta--;
+			if(gameState == States.RUNNING){		
+				while(delta >= 1){
+					gameUpdate(delta);
+					delta--;
+				}
 			}
+	
 			if(running){
 				gameRender();
 			}
@@ -105,5 +133,9 @@ public class GameController extends Canvas implements Runnable {
 		g.dispose();
 		bs.show();
 		
+	}
+
+	public States getGameState() {
+		return gameState;
 	}
 }

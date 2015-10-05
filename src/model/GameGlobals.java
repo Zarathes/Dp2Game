@@ -11,4 +11,12 @@ public class GameGlobals {
 	public static int MAX_ASTROID = 10;
 	public static int MAX_DRONE = 15;
 	public static int SPAWN_TIMER = 100;
+	
+    public static enum States{
+        NOT_STARTED,
+        RUNNING,
+        PAUSED,
+        GAMEOVER,
+        QUIT;
+    }
 }
