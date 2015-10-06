@@ -10,6 +10,7 @@ import controller.behaviour.AnimateBehaviour;
 import controller.behaviour.CollisionBehaviour;
 import controller.behaviour.MoveBehaviour;
 import controller.behaviour.RenderBehaviour;
+import controller.behaviour.TouchBehaviour;
 import controller.behaviour.UpdateBehaviour;
 import library.Point;
 import library.Rand;
@@ -18,6 +19,7 @@ import model.EntityID;
 import model.ResourceManager;
 
 public class SmallDrone extends GameObject {
+	private TouchBehaviour touchContainer;
 	private MoveBehaviour moveContainer;
 	private UpdateBehaviour updateContainer;
 	private CollisionBehaviour collisionContainer;
@@ -26,10 +28,13 @@ public class SmallDrone extends GameObject {
 	
 	private static int spawnCount = 0;
 	
-	public SmallDrone(MoveBehaviour mb, UpdateBehaviour ub, CollisionBehaviour cb, AnimateBehaviour ab, RenderBehaviour rb) {
+	public SmallDrone(TouchBehaviour tb, MoveBehaviour mb, UpdateBehaviour ub, CollisionBehaviour cb, AnimateBehaviour ab, RenderBehaviour rb) {
 		super(EntityID.SmallDrone);
 		
 		init();
+		
+		touchContainer = tb;
+		touchContainer.add(this);
 		
 		moveContainer = mb;
 		moveContainer.add(this);
@@ -51,7 +56,7 @@ public class SmallDrone extends GameObject {
 	
 	
 	private void init(){
-		int size = Rand.randInt((GWIDTH/ 100) * 2, (GWIDTH / 100) * 6);
+		int size = Rand.randInt((GWIDTH/ 100) * 5, (GWIDTH / 100) * 10);
 		setSize(new Dimension(size, size));
 		
 		Vector min;
@@ -124,6 +129,7 @@ public class SmallDrone extends GameObject {
 
 	@Override
 	public void die() {
+		touchContainer.remove(this);
 		moveContainer.remove(this);
 		updateContainer.remove(this);
 		collisionContainer.remove(this);

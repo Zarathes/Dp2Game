@@ -27,11 +27,9 @@ public class RenderBehaviour {
 		for (int i = 0; i < entities.size(); i++) {
 			GameObject entity = entities.get(i);	
 						
-			if(!DEBUG){
-				g.drawImage(entity.getSprite(), (int)(entity.getPosition().getX() - (entity.getSize().getWidth() / 2)), (int)(entity.getPosition().getY() - (entity.getSize().getHeight() / 2)), (int)entity.getSize().getWidth(), (int)entity.getSize().getHeight(), null);
-			} else {	
-				g.drawImage(entity.getSprite(), (int)(entity.getPosition().getX() - (entity.getSize().getWidth() / 2)), (int)(entity.getPosition().getY() - (entity.getSize().getHeight() / 2)), (int)entity.getSize().getWidth(), (int)entity.getSize().getHeight(), null);
+			g.drawImage(entity.getSprite(), (int)(entity.getPosition().getX() - (entity.getSize().getWidth() / 2)), (int)(entity.getPosition().getY() - (entity.getSize().getHeight() / 2)), (int)entity.getSize().getWidth(), (int)entity.getSize().getHeight(), null);
 
+			if(DEBUG){
 				g.setColor(Color.white);
 				g.drawLine((int)entity.getOrigin().getX(), (int)entity.getOrigin().getY(), (int)entity.getPosition().getX(), (int)entity.getPosition().getY());
 				g.drawOval((int)(entity.getPosition().getX() - (entity.getSize().getWidth() / 2) * 0.8), (int)((entity.getPosition().getY() - (entity.getSize().getHeight() / 2) * 0.8)), (int)(entity.getSize().getWidth() * 0.8), (int)(entity.getSize().getHeight() * 0.8));

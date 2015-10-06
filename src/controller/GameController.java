@@ -1,5 +1,6 @@
 package controller;
 
+import static model.GameGlobals.DEBUG;
 import static model.GameGlobals.FULLSCREEN;
 import static model.GameGlobals.GHEIGHT;
 import static model.GameGlobals.GWIDTH;
@@ -14,7 +15,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferStrategy;
+import java.util.PriorityQueue;
 
+import library.KeyPress;
+import library.MouseClick;
 import model.GameGlobals.States;
 import model.ResourceManager;
 import view.GameWindow;
@@ -28,34 +32,31 @@ public class GameController extends Canvas implements Runnable {
 	private States gameState = null;
 	private InputManager im = null;
 	
-	public static void main(String args[]){
-		new GameController();
-	}
-	
 	public GameController(){
 		if(FULLSCREEN){
 			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 			GWIDTH = (int) screenSize.getWidth();
 			GHEIGHT = (int) screenSize.getHeight();
-		}
+		}		
+		new GameWindow("Space Shooter", this); 
 		
-		GameWindow gw = new GameWindow("Space Shooter", this);
-		
-        gw.addMouseListener(new MouseAdapter() {
-        	@Override
-        	public void mouseClicked(MouseEvent me){
-                im.processMouseClick(me);
-                me.consume();
-            }
+		this.addMouseListener(new MouseAdapter() {
+	    	@Override
+	        public void mouseClicked(MouseEvent me){
+	        	im.processMouseClick(me);
+	         	me.consume();
+	       }
 		});
-        
-        gw.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                im.processKeyInput(e);
-                e.consume();
-            }
-        });
+	        
+	    this.addKeyListener(new KeyAdapter() {
+	    	@Override
+	        public void keyPressed(KeyEvent e) {
+	    		im.processKeyInput(e);
+	            e.consume();
+	        }
+	    }); 
+	    
+	    this.requestFocus();
 	}
 	
 	public synchronized void start(){
@@ -66,6 +67,7 @@ public class GameController extends Canvas implements Runnable {
 	
 	public synchronized void stop(){
 		try{
+			System.exit(0);
 			gameLoop.join();
 			running = false;
 		}catch(Exception e){
@@ -82,7 +84,8 @@ public class GameController extends Canvas implements Runnable {
 		long timer = System.currentTimeMillis();
 		int frames = 0;
 		
-		im =  new InputManager(this);
+		im =  new InputManager();
+		gameState = States.RUNNING;
 		
 		while(running){
 			long now = System.nanoTime();
@@ -94,6 +97,8 @@ public class GameController extends Canvas implements Runnable {
 					gameUpdate(delta);
 					delta--;
 				}
+			} else {
+				processKeyInput();
 			}
 	
 			if(running){
@@ -110,9 +115,43 @@ public class GameController extends Canvas implements Runnable {
 			
 		stop();
 	}
+	
+	private PriorityQueue<KeyPress> processKeyInput() {
+		PriorityQueue<KeyPress> presses = im.getKeyPresses();
+		PriorityQueue<KeyPress> unusedPresses = new PriorityQueue<>();		
+		
+		while(presses.peek() != null){
+			KeyPress temp = presses.remove();
+			switch (temp.getKeyCode()) {
+				case KeyEvent.VK_P:
+					if(gameState == States.PAUSED){
+						gameState = States.RUNNING;
+					} else if(gameState == States.RUNNING){
+						gameState = States.PAUSED;						
+					}
+					break;
+				case KeyEvent.VK_ESCAPE:
+			    case KeyEvent.VK_Q:
+			    	stop();
+			        break;
+			    case KeyEvent.VK_D:
+			    	DEBUG = !DEBUG;
+			    	break;			   
+			    default:
+			    	unusedPresses.add(temp);
+			    	break;
+			  }
+		}
+		
+		return unusedPresses;
+	}
+	
+	private PriorityQueue<MouseClick> processMouseInput(){
+		return im.getMouseClicks();
+	}
 
 	private void gameUpdate(float delta) {
-		ObjectManager.getInstance().update(delta);		
+		ObjectManager.getInstance().update(delta, processKeyInput(), processMouseInput());		
 	}
 
 	private void gameRender() {

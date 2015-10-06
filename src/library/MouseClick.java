@@ -5,20 +5,16 @@ package library;
  */
 public class MouseClick implements Comparable<MouseClick> {
 
-    private int x, y, button;
+    private int button;
+    private Point position;
 
     public MouseClick(int x, int y, int b) {
-        this.x = x;
-        this.y = y;
+    	position = new Point(x, y);
         this.button = b;
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
+    public Point getPosition() {
+        return position;
     }
     
     public int getButton() {
