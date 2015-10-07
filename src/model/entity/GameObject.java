@@ -14,6 +14,8 @@ public abstract class GameObject {
 	protected Vector direction;
 	protected Dimension size;
 	
+	protected int worth = 0;
+	
 
 	protected BufferedImage sprite;
 
@@ -86,5 +88,9 @@ public abstract class GameObject {
 		this.alive = alive;
 	}
 
-	public abstract void die();	
+	public abstract void die();
+
+	public void setWorth(int i) {
+		worth = i;
+	}	
 }

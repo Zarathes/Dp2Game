@@ -28,13 +28,14 @@ public class InputManager{
         presses.add(new library.KeyPress(e.getKeyCode(), e));
     }
 
-	public PriorityQueue<MouseClick> getMouseClicks() {
+	public synchronized PriorityQueue<MouseClick> getMouseClicks() {
+		
 		PriorityQueue<MouseClick> tempClicks = clicks;
 		clicks = new PriorityQueue<MouseClick>();
 		return tempClicks;
 	}
 
-	public PriorityQueue<KeyPress> getKeyPresses() {
+	public synchronized PriorityQueue<KeyPress> getKeyPresses() {
 		PriorityQueue<KeyPress> tempPresses = presses;
 		presses = new PriorityQueue<KeyPress>();
 		return tempPresses;

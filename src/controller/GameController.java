@@ -19,8 +19,8 @@ import java.util.PriorityQueue;
 
 import library.KeyPress;
 import library.MouseClick;
+import model.LevelState;
 import model.GameGlobals.States;
-import model.ResourceManager;
 import view.GameWindow;
 
 public class GameController extends Canvas implements Runnable {
@@ -151,7 +151,11 @@ public class GameController extends Canvas implements Runnable {
 	}
 
 	private void gameUpdate(float delta) {
-		ObjectManager.getInstance().update(delta, processKeyInput(), processMouseInput());		
+		if(LevelManager.getInstance().currentLevel().getState() != LevelState.GameOver){
+			LevelManager.getInstance().currentLevel().update(delta, processKeyInput(), processMouseInput());
+		} else {
+			processKeyInput();
+		}
 	}
 
 	private void gameRender() {
@@ -163,11 +167,11 @@ public class GameController extends Canvas implements Runnable {
 		
 		Graphics g = bs.getDrawGraphics();
 		
+
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, GWIDTH, GHEIGHT);
-		g.drawImage(ResourceManager.getInstance().getSprite("background"), 0, 0, null);
 		
-		ObjectManager.getInstance().render(g);
+		LevelManager.getInstance().currentLevel().render(g);
 				
 		g.dispose();
 		bs.show();

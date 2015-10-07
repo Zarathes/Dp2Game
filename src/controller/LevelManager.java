@@ -1,15 +1,9 @@
 package controller;
 
-import static model.GameGlobals.SPAWN_TIMER;
-
-import java.awt.Graphics;
-import java.util.PriorityQueue;
-
-import library.KeyPress;
-import library.MouseClick;
-import model.EntityID;
-import model.entity.Astroid;
-import model.entity.SmallDrone;
+import controller.level.Level;
+import model.LevelFactory;
+import model.LevelID;
+import model.LevelState;
 
 public class LevelManager {
 	private static LevelManager instance;
@@ -19,15 +13,26 @@ public class LevelManager {
     		instance = new LevelManager();
         }
     	return instance;
-    }
+    }    
     
-    private int level = 1;
+    private Level currentLevel = null;
     
-	public void update(float delta, PriorityQueue<KeyPress> priorityQueue, PriorityQueue<MouseClick> mouseClicks) {
+	public Level currentLevel() {
+		if(currentLevel == null || currentLevel.getState() == LevelState.Finished){			
+			return nextLevel();
+		}
 		
-	}     
+		return currentLevel;
+	} 
 	
-	public void render(Graphics g) {
-		renderContainer.execute(g);
+	public Level nextLevel() {
+		if(currentLevel == null){
+			currentLevel = LevelFactory.getInstance().getNextLevel(LevelID.Init);
+		} else if(currentLevel.getState() == LevelState.Finished){
+			currentLevel.clean();
+			currentLevel = LevelFactory.getInstance().getNextLevel(currentLevel.getLevelId());
+		}
+		
+		return currentLevel;
 	}   
 }

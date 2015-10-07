@@ -2,16 +2,15 @@ package model.entity;
 
 import static model.GameGlobals.GHEIGHT;
 import static model.GameGlobals.GWIDTH;
-import static model.GameGlobals.MAX_DRONE;
 
 import java.awt.Dimension;
 
-import controller.behaviour.AnimateBehaviour;
 import controller.behaviour.CollisionBehaviour;
 import controller.behaviour.MoveBehaviour;
 import controller.behaviour.RenderBehaviour;
 import controller.behaviour.TouchBehaviour;
 import controller.behaviour.UpdateBehaviour;
+import controller.level.Level;
 import library.Point;
 import library.Rand;
 import library.Vector;
@@ -23,33 +22,32 @@ public class SmallDrone extends GameObject {
 	private MoveBehaviour moveContainer;
 	private UpdateBehaviour updateContainer;
 	private CollisionBehaviour collisionContainer;
-	private AnimateBehaviour animateContainer;
 	private RenderBehaviour renderContainer;
 	
 	private static int spawnCount = 0;
 	
-	public SmallDrone(TouchBehaviour tb, MoveBehaviour mb, UpdateBehaviour ub, CollisionBehaviour cb, AnimateBehaviour ab, RenderBehaviour rb) {
-		super(EntityID.SmallDrone);
+	private Level currentLevel;
+	
+	public SmallDrone(Level host) {
+		super(EntityID.SmallDrone);		
+		currentLevel = host;
 		
-		init();
-		
-		touchContainer = tb;
+		touchContainer = currentLevel.getTouchContainer();
 		touchContainer.add(this);
 		
-		moveContainer = mb;
+		moveContainer = currentLevel.getMoveContainer();
 		moveContainer.add(this);
 		
-		updateContainer = ub;
+		updateContainer = currentLevel.getUpdateContainer();
 		updateContainer.add(this);
 		
-		collisionContainer = cb;
+		collisionContainer = currentLevel.getCollisionContainer();
 		collisionContainer.add(this);
 		
-		animateContainer = ab;
-		animateContainer.add(this);
-		
-		renderContainer = rb;
+		renderContainer = currentLevel.getRenderContainer();
 		renderContainer.add(this);
+				
+		init();
 		
 		spawnCount++;
 	}
@@ -64,8 +62,6 @@ public class SmallDrone extends GameObject {
 		
 		switch(Rand.randInt(0,3)){
 			case 0:
-				
-				System.out.println("Spawn Small Drone");
 				// North
 				// Start position
 				setPosition(new Point(Rand.randInt(size, GWIDTH - size), -size));
@@ -77,7 +73,6 @@ public class SmallDrone extends GameObject {
 				setDirection(new Vector(Rand.randFloat(min.getX(), max.getX()), 1f));
 				break;
 			case 1:
-				System.out.println("Spawn Small Drone: East");
 				// East
 				setPosition(new Point(GWIDTH + size, Rand.randInt(size, GHEIGHT -size)));
 				
@@ -88,7 +83,6 @@ public class SmallDrone extends GameObject {
 				setDirection(new Vector(-1f, Rand.randFloat(min.getY(), max.getY())));
 				break;
 			case 2:
-				System.out.println("Spawn Astroid: South");
 				// South
 				setPosition(new Point(Rand.randInt(size, GWIDTH - size), GHEIGHT + size));
 				
@@ -99,7 +93,6 @@ public class SmallDrone extends GameObject {
 				setDirection(new Vector(Rand.randFloat(min.getX(), max.getX()), -1));
 				break;
 			case 3:
-				System.out.println("Spawn Small Drone");
 				//West
 				setPosition(new Point(-size, Rand.randInt(size, GHEIGHT - size)));
 				// Direction
@@ -115,12 +108,12 @@ public class SmallDrone extends GameObject {
 		
 		setDirection(Vector.multiplyVector(getDirection(), Rand.randFloat(2, 5)));
 		
-		setSprite(ResourceManager.getInstance().getSprite("small-ship"));
+		setSprite(ResourceManager.getInstance().getSprite("small-ship" + currentLevel.getLevelNumber()));
 		setAlive(true);
 	}
 	
-	public static boolean needsSpawn(){
-		if(spawnCount < MAX_DRONE){
+	public static boolean needsSpawn(int maxShips){
+		if(spawnCount < maxShips){
 			return true;
 		}
 		
@@ -133,9 +126,8 @@ public class SmallDrone extends GameObject {
 		moveContainer.remove(this);
 		updateContainer.remove(this);
 		collisionContainer.remove(this);
-		animateContainer.remove(this);
 		renderContainer.remove(this);
-		
+		currentLevel.addScore(worth);
 		spawnCount--;
 	}
 }

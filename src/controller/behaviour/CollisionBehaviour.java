@@ -86,4 +86,11 @@ public class CollisionBehaviour {
 			t++;
 		}	
 	}
+	
+	public void clean() {
+		for (int i = 0; i < entities.size(); i++) {
+			GameObject entity = entities.get(i);
+			entity.die();
+		}		
+	}
 }
